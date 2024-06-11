@@ -1,0 +1,27 @@
+{
+  "name": "afiliacion.cda.api",
+  "version": "1.0.0",
+  "description": "RESTful API using Node, Express, MongoDB using IMSS's info (afiliacion.cda.api)",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/FernandoTorresL/afiliacion.cda.api.git"
+  },
+  "keywords": [
+    "API",
+    "REST",
+    "Node",
+    "Express",
+    "MongoDB",
+    "IMSS"
+  ],
+  "author": "Fer Torres",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/FernandoTorresL/afiliacion.cda.api/issues"
+  },
+  "homepage": "https://github.com/FernandoTorresL/afiliacion.cda.api#readme"
+}
