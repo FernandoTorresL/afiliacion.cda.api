@@ -3,10 +3,13 @@ require('dotenv').config();
 const routes = require('./routes/routes');
 const express = require('express');
 const mongoose = require('mongoose');
+
 const mongoString = process.env.DATABASE_URL
+const dbname = process.env.DATABASE_NAME
 
 // Connect to DB
-mongoose.connect(mongoString);
+mongoose.connect(mongoString, { dbname: dbname } );
+
 const database = mongoose.connection;
 
 // Test connection
@@ -17,6 +20,7 @@ database.on('error', (error) => {
 database.once('connected', () => {
     console.log('Database connected!');
 })
+
 
 // Transfer the content of Express into constant app
 const app = express();
