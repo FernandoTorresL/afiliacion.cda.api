@@ -15,52 +15,24 @@ router.get('/getAll', async (req, res) => {
     {
       "$group": {
         "_id": {
-          "operacion": "$operacion",
+          "operacion": { "$toLower": "$operacion" },
           "atendido": "$atendido"
         },
-        "count": {
-          "$sum": 1
-        }
+        "count": { "$sum": 1 }
       }
     },
     {
       "$group": {
         "_id": "$_id.operacion",
-        "atendido_0": {
-          "$sum": {
-            "$cond": [
-              {
-                "$eq": [
-                  "$_id.atendido",
-                  0
-                ]
-              },
-              "$count",
-              0
-            ]
-          }
-        },
-        "atendido_1": {
-          "$sum": {
-            "$cond": [
-              {
-                "$eq": [
-                  "$_id.atendido",
-                  1
-                ]
-              },
-              "$count",
-              0
-            ]
+        "atendidos": {
+          "$push": {
+            "atendido": "$_id.atendido",
+            "count": "$count"
           }
         }
       }
     },
-    {
-      "$sort": {
-        "_id": 1
-      }
-    }
+    { "$sort": { "_id": 1 } }
         ]);
 
         res.json(solicitud)
