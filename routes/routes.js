@@ -12,36 +12,55 @@ module.exports = router;
 router.get('/getAll', async (req, res) => {
     try{
         const solicitud = await Model.aggregate([
-            {
-                $group: {
-                    _id: "$asunto",
-                    operacion: { $first: { $toLower: "$operacion" } },
-                    atendido: { $first: "$atendido" }
-                }
-            },
-            {
-                $group: {
-                    _id: {
-                        operacion: "$operacion",
-                        atendido: "$atendido"
-                    },
-                    count: { $sum: 1 }
-                }
-            },
-            {
-                $project: {
-                    _id: 0,
-                    operacion: "$_id.operacion",
-                    atendido: "$_id.atendido",
-                    count: 1
-                }
-            },
-            {
-                $sort: {
-                    operacion: 1, // Orden ascendente por operacion
-                    atendido: 1   // Orden ascendente por atendido
-                }
-            }
+    {
+      "$group": {
+        "_id": {
+          "operacion": "$operacion",
+          "atendido": "$atendido"
+        },
+        "count": {
+          "$sum": 1
+        }
+      }
+    },
+    {
+      "$group": {
+        "_id": "$_id.operacion",
+        "atendido_0": {
+          "$sum": {
+            "$cond": [
+              {
+                "$eq": [
+                  "$_id.atendido",
+                  0
+                ]
+              },
+              "$count",
+              0
+            ]
+          }
+        },
+        "atendido_1": {
+          "$sum": {
+            "$cond": [
+              {
+                "$eq": [
+                  "$_id.atendido",
+                  1
+                ]
+              },
+              "$count",
+              0
+            ]
+          }
+        }
+      }
+    },
+    {
+      "$sort": {
+        "_id": 1
+      }
+    }
         ]);
 
         res.json(solicitud)
