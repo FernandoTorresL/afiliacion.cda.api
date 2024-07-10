@@ -11,7 +11,39 @@ module.exports = router;
 }) */
 router.get('/getAll', async (req, res) => {
     try{
-        const solicitud = await Model.find();
+        const solicitud = await Model.aggregate([
+            {
+                $group: {
+                    _id: "$asunto",
+                    operacion: { $first: { $toLower: "$operacion" } },
+                    atendido: { $first: "$atendido" }
+                }
+            },
+            {
+                $group: {
+                    _id: {
+                        operacion: "$operacion",
+                        atendido: "$atendido"
+                    },
+                    count: { $sum: 1 }
+                }
+            },
+            {
+                $project: {
+                    _id: 0,
+                    operacion: "$_id.operacion",
+                    atendido: "$_id.atendido",
+                    count: 1
+                }
+            },
+            {
+                $sort: {
+                    operacion: 1, // Orden ascendente por operacion
+                    atendido: 1   // Orden ascendente por atendido
+                }
+            }
+        ]);
+
         res.json(solicitud)
     }
     catch(error){
@@ -21,7 +53,7 @@ router.get('/getAll', async (req, res) => {
 
 router.get('/getAllTest', async (req, res) => {
     try{
-        const solicitud = await Model.find( { asunto: "21-02-EP-J29" } );
+        const solicitud = await Model.find( { asunto: "14-39-MOTIVO1-04816447728" } );
         res.json(solicitud)
     }
     catch(error){
