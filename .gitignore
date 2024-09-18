@@ -238,3 +238,10 @@ $RECYCLE.BIN/
 
 # VSCode Workspaces
 *.code-workspace
+
+venv
+/tmp_jupyter/.venv
+.venv
+tmp_jupyter/.venv
+tmp_jupyter/venv
+tmp_jupyter/

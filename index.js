@@ -4,6 +4,8 @@ const routes = require('./routes/routes');
 const express = require('express');
 const mongoose = require('mongoose');
 
+const cors = require("cors");
+
 const mongoString = process.env.DATABASE_URL
 const dbname = process.env.DATABASE_NAME
 
@@ -25,6 +27,7 @@ database.once('connected', () => {
 // Transfer the content of Express into constant app
 const app = express();
 
+app.use(cors({ origin: "*" }));
 // Parse incoming requests with JSON payloads
 app.use(express.json());
 

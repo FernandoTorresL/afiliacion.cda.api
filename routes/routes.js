@@ -6,53 +6,33 @@ const router = express.Router()
 module.exports = router;
 
 //Get all Method
-/* router.get('/getAll', (req, res) => {
-    res.send('Get All Solicitudes')
-}) */
-router.get('/getAll', async (req, res) => {
-    try{
-        const solicitud = await Model.aggregate([
-    {
-      "$group": {
-        "_id": {
-          "operacion": { "$toLower": "$operacion" },
-          "atendido": "$atendido"
-        },
-        "count": { "$sum": 1 }
-      }
-    },
-    {
-      "$group": {
-        "_id": "$_id.operacion",
-        "atendidos": {
-          "$push": {
-            "atendido": "$_id.atendido",
-            "count": "$count"
-          }
+router.get('/v1/getAll', async (req, res) => {
+  try {
+    const solicitud = await Model.aggregate([
+      {
+        $project: {
+          operacion: { $toLower: "$operacion" },
+          atendido: 1
+        }
+      },
+      {
+        $group: {
+          _id: { operacion: "$operacion", atendido: "$atendido" },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $sort: {
+          "_id.operacion": 1,
+          "_id.atendido": 1
         }
       }
-    },
-    { "$sort": { "_id": 1 } }
-        ]);
+    ]);
 
-        res.json(solicitud)
-    }
-    catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
+    res.json(solicitud)
+  }
 
-router.get('/getAllTest', async (req, res) => {
-    try{
-        const solicitud = await Model.find( { asunto: "14-39-MOTIVO1-04816447728" } );
-        res.json(solicitud)
-    }
-    catch(error){
-        res.status(500).json({message: error.message})
-    }
-})
-
-//Get by ID Method
-router.get('/getOne/:id', (req, res) => {
-    res.send(req.params.id)
+  catch (error) {
+    res.status(500).json({ message: error.message })
+  }
 })
