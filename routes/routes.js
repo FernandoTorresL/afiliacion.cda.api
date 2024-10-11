@@ -28,6 +28,7 @@ router.get('/v1/getAll', async (req, res) => {
         }
       }
     ]);
+    require('log-timestamp')
     console.log("TODOS")
     res.json(solicitud)
   }
@@ -54,7 +55,8 @@ router.get('/v1/IVRO/atendidos', async (req, res) => {
             "fecha": 1
           }
         );
-        console.log("IVRO-atendidos")
+      require('log-timestamp')
+      console.log("IVRO-atendidos")
       res.status(200).json(solicitud);
     }
     catch(error){
@@ -75,7 +77,8 @@ router.get('/v1/IVRO/pendientes', async (req, res) => {
             "fecha": 1
           }
         );
-        console.log("IVRO-pendientes")
+      require('log-timestamp')
+      console.log("IVRO-pendientes")
       res.status(200).json(solicitud);
     }
     catch(error){
@@ -96,7 +99,8 @@ router.get('/v1/IVRO/asunto/:asunto', async (req, res) => {
             "fecha": 1
           }
         );
-        console.log("IVRO-xasunto")
+      require('log-timestamp')
+      console.log("IVRO-xasunto")
       res.status(200).json(solicitud);
     }
     catch (error) {
@@ -119,7 +123,8 @@ router.get('/v1/TEC/atendidos', async (req, res) => {
             "fecha": 1
           }
         );
-        console.log("TEC-atendidos")
+      require('log-timestamp')
+      console.log("TEC-atendidos")
       res.status(200).json(solicitud);
     }
     catch(error){
@@ -140,7 +145,8 @@ router.get('/v1/TEC/pendientes', async (req, res) => {
             "fecha": 1
           }
         );
-        console.log("TEC-pendientes")
+      require('log-timestamp')
+      console.log("TEC-pendientes")
       res.status(200).json(solicitud);
     }
     catch(error){
@@ -161,7 +167,8 @@ router.get('/v1/TEC/asunto/:asunto', async (req, res) => {
             "fecha": 1
           }
         );
-        console.log("TEC-xasunto")
+      require('log-timestamp')
+      console.log("TEC-xasunto")
       res.status(200).json(solicitud);
     }
     catch (error) {
@@ -184,7 +191,8 @@ router.get('/v1/CDA07/atendidos', async (req, res) => {
             "fecha": 1
           }
         );
-        console.log("CDA07-atendidos")
+      require('log-timestamp')
+      console.log("CDA07-atendidos")
       res.status(200).json(solicitud);
     }
     catch(error){
@@ -205,7 +213,8 @@ router.get('/v1/CDA07/pendientes', async (req, res) => {
             "fecha": 1
           }
         );
-        console.log("CDA07-pendientes")
+      require('log-timestamp')
+      console.log("CDA07-pendientes")
       res.status(200).json(solicitud);
     }
     catch(error){
@@ -226,7 +235,8 @@ router.get('/v1/CDA07/asunto/:asunto', async (req, res) => {
             "fecha": 1
           }
         );
-        console.log("CDA07-xasunto")
+      require('log-timestamp')
+      console.log("CDA07-xasunto")
       res.status(200).json(solicitud);
     }
     catch (error) {
