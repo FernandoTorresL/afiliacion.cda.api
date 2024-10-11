@@ -28,7 +28,7 @@ router.get('/v1/getAll', async (req, res) => {
         }
       }
     ]);
-
+    console.log("TODOS")
     res.json(solicitud)
   }
 
@@ -54,6 +54,7 @@ router.get('/v1/IVRO/atendidos', async (req, res) => {
             "fecha": 1
           }
         );
+        console.log("IVRO-atendidos")
       res.status(200).json(solicitud);
     }
     catch(error){
@@ -74,6 +75,7 @@ router.get('/v1/IVRO/pendientes', async (req, res) => {
             "fecha": 1
           }
         );
+        console.log("IVRO-pendientes")
       res.status(200).json(solicitud);
     }
     catch(error){
@@ -94,6 +96,7 @@ router.get('/v1/IVRO/asunto/:asunto', async (req, res) => {
             "fecha": 1
           }
         );
+        console.log("IVRO-xasunto")
       res.status(200).json(solicitud);
     }
     catch (error) {
@@ -116,6 +119,7 @@ router.get('/v1/TEC/atendidos', async (req, res) => {
             "fecha": 1
           }
         );
+        console.log("TEC-atendidos")
       res.status(200).json(solicitud);
     }
     catch(error){
@@ -136,6 +140,7 @@ router.get('/v1/TEC/pendientes', async (req, res) => {
             "fecha": 1
           }
         );
+        console.log("TEC-pendientes")
       res.status(200).json(solicitud);
     }
     catch(error){
@@ -156,6 +161,7 @@ router.get('/v1/TEC/asunto/:asunto', async (req, res) => {
             "fecha": 1
           }
         );
+        console.log("TEC-xasunto")
       res.status(200).json(solicitud);
     }
     catch (error) {
@@ -163,3 +169,67 @@ router.get('/v1/TEC/asunto/:asunto', async (req, res) => {
   }
 })
 
+//CDA07
+
+router.get('/v1/CDA07/atendidos', async (req, res) => {
+  try{
+      const solicitud = await Model.find(
+          {
+            "operacion":  "CDA07",
+            "atendido": 1
+          }
+        ).sort(
+          {
+            "asunto": 1,
+            "fecha": 1
+          }
+        );
+        console.log("CDA07-atendidos")
+      res.status(200).json(solicitud);
+    }
+    catch(error){
+      res.status(500).json({message: error.message})
+  }
+})
+
+router.get('/v1/CDA07/pendientes', async (req, res) => {
+  try{
+      const solicitud = await Model.find(
+          {
+            "operacion":  "CDA07",
+            "atendido": 0
+          }
+        ).sort(
+          {
+            "asunto": 1,
+            "fecha": 1
+          }
+        );
+        console.log("CDA07-pendientes")
+      res.status(200).json(solicitud);
+    }
+    catch(error){
+      res.status(500).json({message: error.message})
+  }
+})
+
+router.get('/v1/CDA07/asunto/:asunto', async (req, res) => {
+  try{
+      let asunto_str = req.params.asunto;
+      const solicitud = await Model.find(
+          {
+            "operacion": "CDA07",
+            "asunto": asunto_str
+          }
+        ).sort(
+          {
+            "fecha": 1
+          }
+        );
+        console.log("CDA07-xasunto")
+      res.status(200).json(solicitud);
+    }
+    catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+})
