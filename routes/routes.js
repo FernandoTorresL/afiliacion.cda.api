@@ -38,6 +38,27 @@ router.get('/v1/getAll', async (req, res) => {
   }
 })
 
+router.get('/v1/asunto/:asunto', async (req, res) => {
+  try{
+      let asunto_str = req.params.asunto;
+      const solicitud = await Model.find(
+          {
+            "asunto": asunto_str
+          }
+        ).sort(
+          {
+            "fecha": 1
+          }
+        );
+      require('log-timestamp')
+      console.log("ALL-xasunto")
+      res.status(200).json(solicitud);
+    }
+    catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+})
+
 //IVRO y TEC
 
 //IVRO
