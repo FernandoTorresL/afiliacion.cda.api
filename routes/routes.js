@@ -264,3 +264,139 @@ router.get('/v1/CDA07/asunto/:asunto', async (req, res) => {
     res.status(500).json({ message: error.message });
   }
 })
+
+//MOTIVO7
+
+router.get('/v1/MOTIVO7/atendidos', async (req, res) => {
+  try{
+      const solicitud = await Model.find(
+          {
+            "operacion":  "MOTIVO7",
+            "atendido": 1
+          }
+        ).sort(
+          {
+            "asunto": 1,
+            "fecha": 1
+          }
+        );
+      require('log-timestamp')
+      console.log("MOTIVO7-atendidos")
+      res.status(200).json(solicitud);
+    }
+    catch(error){
+      res.status(500).json({message: error.message})
+  }
+})
+
+router.get('/v1/MOTIVO7/pendientes', async (req, res) => {
+  try{
+      const solicitud = await Model.find(
+          {
+            "operacion":  "MOTIVO7",
+            "atendido": 0
+          }
+        ).sort(
+          {
+            "asunto": 1,
+            "fecha": 1
+          }
+        );
+      require('log-timestamp')
+      console.log("MOTIVO7-pendientes")
+      res.status(200).json(solicitud);
+    }
+    catch(error){
+      res.status(500).json({message: error.message})
+  }
+})
+
+router.get('/v1/MOTIVO7/asunto/:asunto', async (req, res) => {
+  try{
+      let asunto_str = req.params.asunto;
+      const solicitud = await Model.find(
+          {
+            "operacion": "MOTIVO7",
+            "asunto": asunto_str
+          }
+        ).sort(
+          {
+            "fecha": 1
+          }
+        );
+      require('log-timestamp')
+      console.log("MOTIVO7-xasunto")
+      res.status(200).json(solicitud);
+    }
+    catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+})
+
+//CDA01
+
+router.get('/v1/CDA01/atendidos', async (req, res) => {
+  try{
+      const solicitud = await Model.find(
+          {
+            "operacion":  "CDA01",
+            "atendido": 1
+          }
+        ).sort(
+          {
+            "asunto": 1,
+            "fecha": 1
+          }
+        );
+      require('log-timestamp')
+      console.log("CDA01-atendidos")
+      res.status(200).json(solicitud);
+    }
+    catch(error){
+      res.status(500).json({message: error.message})
+  }
+})
+
+router.get('/v1/CDA01/pendientes', async (req, res) => {
+  try{
+      const solicitud = await Model.find(
+          {
+            "operacion":  "CDA01",
+            "atendido": 0
+          }
+        ).sort(
+          {
+            "asunto": 1,
+            "fecha": 1
+          }
+        );
+      require('log-timestamp')
+      console.log("CDA01-pendientes")
+      res.status(200).json(solicitud);
+    }
+    catch(error){
+      res.status(500).json({message: error.message})
+  }
+})
+
+router.get('/v1/CDA01/asunto/:asunto', async (req, res) => {
+  try{
+      let asunto_str = req.params.asunto;
+      const solicitud = await Model.find(
+          {
+            "operacion": "CDA01",
+            "asunto": asunto_str
+          }
+        ).sort(
+          {
+            "fecha": 1
+          }
+        );
+      require('log-timestamp')
+      console.log("CDA01-xasunto")
+      res.status(200).json(solicitud);
+    }
+    catch (error) {
+    res.status(500).json({ message: error.message });
+  }
+})
