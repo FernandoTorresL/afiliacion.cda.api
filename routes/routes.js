@@ -103,7 +103,7 @@ router.get('/v1/asunto/:asunto', async (req, res) => {
     );
 
     require('log-timestamp')
-    console.log("One x asunto: ", asunto_str)
+    console.log("One x asunto:", asunto_str)
     res.status(200).json(solicitud);
   }
   catch (error) {
@@ -164,6 +164,39 @@ router.get('/v1/:operacion/pendientes', async (req, res) => {
 
     require('log-timestamp')
     console.log(operacion_str, "-pendientes")
+    res.status(200).json(solicitud);
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
+
+// Get all by one operation, one asunto
+router.get('/v1/:operacion/asunto/:asunto', async (req, res) => {
+  try {
+
+    let operacion_str = req.params.operacion;
+    let asunto_str = req.params.asunto;
+
+    const solicitud = await Model.find(
+      {
+        "operacion": {
+          "$regex": operacion_str,
+          "$options": "i"
+        },
+        "asunto": {
+          "$regex": asunto_str,
+          "$options": "i"
+        }
+      }
+    ).sort(
+      {
+        "fecha": 1
+      }
+    );
+
+    require('log-timestamp')
+    console.log("OPERATION:", operacion_str, "| ASUNTO:", asunto_str)
     res.status(200).json(solicitud);
   }
   catch (error) {
