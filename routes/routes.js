@@ -203,3 +203,40 @@ router.get('/v1/:operacion/asunto/:asunto', async (req, res) => {
     res.status(500).json({ message: error.message })
   }
 })
+
+// Get all on MOD40 and delegation (atendido = 0)
+router.get('/v1/:operacion/delegacion/:delegacion/pendientes2024', async (req, res) => {
+  try {
+
+    let operacion_str = req.params.operacion;
+    let delegacion_str = req.params.delegacion;
+    const fecha_consulta = new Date("2025-01-01T06:00:00.000Z");
+
+    const solicitud = await Model.find(
+      {
+        "operacion": {
+          "$regex": operacion_str,
+          "$options": "i"
+        },
+        atendido: 0,
+        delegacion: delegacion_str,
+        fecha: {
+          $lt: fecha_consulta
+        }
+      }
+    ).sort(
+      {
+        fecha: 1,
+        subdelegacion: 1,
+        asunto: 1
+      }
+    );
+
+    require('log-timestamp')
+    console.log("PENDIENTES_2024:OPERATION:", operacion_str, "| DEL:", delegacion_str)
+    res.status(200).json(solicitud);
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
