@@ -39,7 +39,7 @@ router.get('/v1/getAll', async (req, res) => {
 })
 
 //Get all Method Without Duplicate
-router.get('/v1/getAllWD', async (req, res) => {
+router.get('np', async (req, res) => {
   try {
     const solicitud = await Model.aggregate([
         {
@@ -81,5 +81,30 @@ router.get('/v1/getAllWD', async (req, res) => {
 
   catch (error) {
     res.status(500).json({ message: error.message })
+  }
+})
+
+// Get an specific record by asunto
+router.get('/v1/asunto/:asunto', async (req, res) => {
+  try{
+      let asunto_str = req.params.asunto;
+      const solicitud = await Model.find(
+          {
+            "asunto": {
+              "$regex": asunto_str,
+              "$options": "i"
+            }
+          }
+        ).sort(
+          {
+            "fecha": 1
+          }
+        );
+      require('log-timestamp')
+      console.log("One x asunto: ", asunto_str)
+      res.status(200).json(solicitud);
+    }
+    catch (error) {
+    res.status(500).json({ message: error.message });
   }
 })
