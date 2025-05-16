@@ -240,3 +240,125 @@ router.get('/v1/:operacion/delegacion/:delegacion/pendientes2024', async (req, r
     res.status(500).json({ message: error.message })
   }
 })
+
+
+//Get All Before a Date. All received before the date on fecha_consulta
+router.get('/v1/getAllBeforeADate', async (req, res) => {
+  try {
+    const fecha_consulta = new Date("2025-05-12T06:00:00.000Z");
+
+    const solicitud = await Model.aggregate([
+      {  
+        $match: {
+          fecha: { $lt: fecha_consulta }
+        }
+
+      },
+      {
+        $project: {
+          operacion: "$operacion",
+          atendido: 1,
+          fecha: 1
+        }
+      },
+      {
+        $group: {
+          _id: { operacion: "$operacion", atendido: "$atendido" },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.operacion",  // Agrupar por "operacion"
+          atendidos: {
+            $sum: {
+              $cond: [{ $eq: ["$_id.atendido", 1] }, "$count", 0] // Cambiado a 1
+            }
+          },
+          no_atendidos: {
+            $sum: {
+              $cond: [{ $eq: ["$_id.atendido", 0] }, "$count", 0] // Cambiado a 0
+            }
+          }
+        }
+      },
+      {
+        $sort: {
+          "_id": 1  // Ordenar por operacion
+        }
+      }
+    ]);
+
+    require('log-timestamp')
+    console.log("TODOS - BEFORE SOME DATE")
+    res.json(solicitud)
+  }
+
+  catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
+
+
+//Get All Between some dates
+router.get('/v1/getAllBetweenDates', async (req, res) => {
+  try {
+    const fecha_consulta1 = new Date("2025-04-01T06:00:00.000Z");
+    const fecha_consulta2 = new Date("2025-05-01T06:00:00.000Z");
+
+    const solicitud = await Model.aggregate([
+      {  
+        $match: {
+          fecha: {
+            $gte: fecha_consulta1,
+            $lte: fecha_consulta2
+          }
+        }
+
+      },
+      {
+        $project: {
+          operacion: "$operacion",
+          atendido: 1,
+          fecha: 1
+        }
+      },
+      {
+        $group: {
+          _id: { operacion: "$operacion", atendido: "$atendido" },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.operacion",  // Agrupar por "operacion"
+          atendidos: {
+            $sum: {
+              $cond: [{ $eq: ["$_id.atendido", 1] }, "$count", 0] // Cambiado a 1
+            }
+          },
+          no_atendidos: {
+            $sum: {
+              $cond: [{ $eq: ["$_id.atendido", 0] }, "$count", 0] // Cambiado a 0
+            }
+          }
+        }
+      },
+      {
+        $sort: {
+          "_id": 1  // Ordenar por operacion
+        }
+      }
+    ]);
+
+    require('log-timestamp')
+    console.log("TODOS - BETWEEN SOME DATES")
+
+    res.json(solicitud)
+  }
+
+  catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
+
