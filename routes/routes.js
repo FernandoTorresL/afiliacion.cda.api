@@ -89,7 +89,6 @@ router.get('/v1/getAll/antes_de/:antes_de_fecha', async (req, res) => {
   try {
 
     let antes_de_fecha_str = req.params.antes_de_fecha + "T06:00:00.000Z";
-
     const fecha_consulta = new Date(antes_de_fecha_str);
 
     const solicitud = await Model.aggregate([
@@ -135,7 +134,7 @@ router.get('/v1/getAll/antes_de/:antes_de_fecha', async (req, res) => {
     ]);
 
     require('log-timestamp')
-    console.log("CONTEO DE TODOS ANTES DE YYYY-MM-DD:", fecha_consulta)
+    console.log("CONTEO DE TODOS ANTES DE", fecha_consulta)
     res.status(200).json(solicitud);
   }
   catch (error) {
@@ -148,8 +147,8 @@ router.get('/v1/getAll/antes_de/:antes_de_fecha', async (req, res) => {
 router.get('/v1/getAll/entre/:despues_de_fecha/:antes_de_fecha', async (req, res) => {
   try {
 
-    let antes_de_fecha_str = req.params.antes_de_fecha + "T06:00:00.000Z";
     let despues_de_fecha_str = req.params.despues_de_fecha + "T06:00:00.000Z";
+    let antes_de_fecha_str = req.params.antes_de_fecha + "T06:00:00.000Z";
 
     const fecha_consulta1 = new Date(despues_de_fecha_str);
     const fecha_consulta2 = new Date(antes_de_fecha_str);
@@ -197,7 +196,7 @@ router.get('/v1/getAll/entre/:despues_de_fecha/:antes_de_fecha', async (req, res
     ]);
 
     require('log-timestamp')
-    console.log("CONTEO DE TODOS DESPUES DE YYYY-MM-DD:", fecha_consulta1, " Y ANTES DE", fecha_consulta2)
+    console.log("CONTEO DE TODOS DESPUES DE", fecha_consulta1, " Y ANTES DE", fecha_consulta2)
     res.status(200).json(solicitud);
   }
   catch (error) {
@@ -260,7 +259,7 @@ router.get('/v1/getAllWD/antes_de/:antes_de_fecha', async (req, res) => {
   ]);
 
     require('log-timestamp')
-    console.log("CONTEO DE TODOS ANTES DE YYYY-MM-DD:", fecha_consulta, "SIN DUPLICADOS")
+    console.log("CONTEO DE TODOS ANTES DE", fecha_consulta, "SIN DUPLICADOS")
     res.json(solicitud)
   }
   catch (error) {
@@ -325,7 +324,7 @@ router.get('/v1/getAllWD/entre/:despues_de_fecha/:antes_de_fecha', async (req, r
   ]);
 
     require('log-timestamp')
-    console.log("CONTEO DE TODOS DESPUES DE YYYY-MM-DD:", fecha_consulta1, " Y ANTES DE", fecha_consulta2, "SIN DUPLICADOS")
+    console.log("CONTEO DE TODOS DESPUES DE", fecha_consulta1, " Y ANTES DE", fecha_consulta2, "SIN DUPLICADOS")
     res.json(solicitud)
   }
   catch (error) {
