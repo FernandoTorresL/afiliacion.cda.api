@@ -83,6 +83,256 @@ router.get('/v1/getAllWD', async (req, res) => {
   }
 })
 
+
+// Get COUNT atendidos/pendientes before a specific date
+router.get('/v1/getAll/antes_de/:antes_de_fecha', async (req, res) => {
+  try {
+
+    let antes_de_fecha_str = req.params.antes_de_fecha + "T06:00:00.000Z";
+
+    const fecha_consulta = new Date(antes_de_fecha_str);
+
+    const solicitud = await Model.aggregate([
+      {
+        $match: {
+          fecha: { $lt: fecha_consulta }
+        }
+
+      },
+      {
+        $project: {
+          operacion: "$operacion",
+          atendido: 1,
+          fecha: 1
+        }
+      },
+      {
+        $group: {
+          _id: { operacion: "$operacion", atendido: "$atendido" },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.operacion",  // Agrupar por "operacion"
+          atendidos: {
+            $sum: {
+              $cond: [{ $eq: ["$_id.atendido", 1] }, "$count", 0] // Cambiado a 1
+            }
+          },
+          no_atendidos: {
+            $sum: {
+              $cond: [{ $eq: ["$_id.atendido", 0] }, "$count", 0] // Cambiado a 0
+            }
+          }
+        }
+      },
+      {
+        $sort: {
+          "_id": 1  // Ordenar por operacion
+        }
+      }
+    ]);
+
+    require('log-timestamp')
+    console.log("CONTEO DE TODOS ANTES DE YYYY-MM-DD:", fecha_consulta)
+    res.status(200).json(solicitud);
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
+
+
+// Get COUNT atendidos/pendientes between dates
+router.get('/v1/getAll/entre/:despues_de_fecha/:antes_de_fecha', async (req, res) => {
+  try {
+
+    let antes_de_fecha_str = req.params.antes_de_fecha + "T06:00:00.000Z";
+    let despues_de_fecha_str = req.params.despues_de_fecha + "T06:00:00.000Z";
+
+    const fecha_consulta1 = new Date(despues_de_fecha_str);
+    const fecha_consulta2 = new Date(antes_de_fecha_str);
+
+    const solicitud = await Model.aggregate([
+      {
+        $match: {
+          fecha: { $gt: fecha_consulta1, $lt: fecha_consulta2 }
+        }
+
+      },
+      {
+        $project: {
+          operacion: "$operacion",
+          atendido: 1,
+          fecha: 1
+        }
+      },
+      {
+        $group: {
+          _id: { operacion: "$operacion", atendido: "$atendido" },
+          count: { $sum: 1 }
+        }
+      },
+      {
+        $group: {
+          _id: "$_id.operacion",  // Agrupar por "operacion"
+          atendidos: {
+            $sum: {
+              $cond: [{ $eq: ["$_id.atendido", 1] }, "$count", 0] // Cambiado a 1
+            }
+          },
+          no_atendidos: {
+            $sum: {
+              $cond: [{ $eq: ["$_id.atendido", 0] }, "$count", 0] // Cambiado a 0
+            }
+          }
+        }
+      },
+      {
+        $sort: {
+          "_id": 1  // Ordenar por operacion
+        }
+      }
+    ]);
+
+    require('log-timestamp')
+    console.log("CONTEO DE TODOS DESPUES DE YYYY-MM-DD:", fecha_consulta1, " Y ANTES DE", fecha_consulta2)
+    res.status(200).json(solicitud);
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
+
+// Get COUNT atendidos/pendientes before a specific date + Without Duplicate
+router.get('/v1/getAllWD/antes_de/:antes_de_fecha', async (req, res) => {
+  try {
+
+    let antes_de_fecha_str = req.params.antes_de_fecha + "T06:00:00.000Z";
+    const fecha_consulta = new Date(antes_de_fecha_str);
+
+    const solicitud = await Model.aggregate([
+    {
+      $match: {
+        fecha: { $lt: fecha_consulta }
+      }
+    },
+    {
+      $group: {
+        _id: {
+          operacion: "$operacion",
+          atendido: "$atendido",
+          asunto: "$asunto"
+        },
+        fecha: { $first: "$fecha" }  // puedes conservar campos relevantes
+      }
+    },
+    {
+      $group: {
+        _id: {
+          operacion: "$_id.operacion",
+          atendido: "$_id.atendido"
+        },
+        count: { $sum: 1 }
+      }
+    },
+    {
+      $group: {
+        _id: "$_id.operacion",  // Agrupar por "operacion"
+        atendidos: {
+          $sum: {
+            $cond: [{ $eq: ["$_id.atendido", 1] }, "$count", 0]
+          }
+        },
+        no_atendidos: {
+          $sum: {
+            $cond: [{ $eq: ["$_id.atendido", 0] }, "$count", 0]
+          }
+        }
+      }
+    },
+    {
+      $sort: {
+        "_id": 1  // Ordenar por operacion
+      }
+    }
+  ]);
+
+    require('log-timestamp')
+    console.log("CONTEO DE TODOS ANTES DE YYYY-MM-DD:", fecha_consulta, "SIN DUPLICADOS")
+    res.json(solicitud)
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
+
+// Get COUNT atendidos/pendientes between specific dates + Without Duplicate
+router.get('/v1/getAllWD/entre/:despues_de_fecha/:antes_de_fecha', async (req, res) => {
+  try {
+    let antes_de_fecha_str = req.params.antes_de_fecha + "T06:00:00.000Z";
+    let despues_de_fecha_str = req.params.despues_de_fecha + "T06:00:00.000Z";
+
+    const fecha_consulta1 = new Date(despues_de_fecha_str);
+    const fecha_consulta2 = new Date(antes_de_fecha_str);
+
+    const solicitud = await Model.aggregate([
+    {
+      $match: {
+        fecha: { $gt: fecha_consulta1, $lt: fecha_consulta2 }
+      }
+    },
+    {
+      $group: {
+        _id: {
+          operacion: "$operacion",
+          atendido: "$atendido",
+          asunto: "$asunto"
+        },
+        fecha: { $first: "$fecha" }  // puedes conservar campos relevantes
+      }
+    },
+    {
+      $group: {
+        _id: {
+          operacion: "$_id.operacion",
+          atendido: "$_id.atendido"
+        },
+        count: { $sum: 1 }
+      }
+    },
+    {
+      $group: {
+        _id: "$_id.operacion",  // Agrupar por "operacion"
+        atendidos: {
+          $sum: {
+            $cond: [{ $eq: ["$_id.atendido", 1] }, "$count", 0]
+          }
+        },
+        no_atendidos: {
+          $sum: {
+            $cond: [{ $eq: ["$_id.atendido", 0] }, "$count", 0]
+          }
+        }
+      }
+    },
+    {
+      $sort: {
+        "_id": 1  // Ordenar por operacion
+      }
+    }
+  ]);
+
+    require('log-timestamp')
+    console.log("CONTEO DE TODOS DESPUES DE YYYY-MM-DD:", fecha_consulta1, " Y ANTES DE", fecha_consulta2, "SIN DUPLICADOS")
+    res.json(solicitud)
+  }
+  catch (error) {
+    res.status(500).json({ message: error.message })
+  }
+})
+
 // Get an specific record by asunto
 router.get('/v1/asunto/:asunto', async (req, res) => {
   try {
@@ -303,11 +553,6 @@ function valorAsciiDe(c) {
 router.get('/v1/getchecksum', async (req, res) => {
   const { cadena } = req.query;
   try {
-
-//    let cadena = req.params.cadena;
-//    let tamanio = req.params.tamanio;
-
-    // const checksum_str = getCheckSum(cadena, tamanio)
     const checksum_str = getCheckSum(cadena.toUpperCase(), parseInt(9));
 
     require('log-timestamp')
